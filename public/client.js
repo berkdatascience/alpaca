@@ -1,9 +1,13 @@
 const socket = io();
+const name = prompt('Enter your name');
+socket.emit('join', name);
 const canvas = document.getElementById('game');
 const ctx = canvas.getContext('2d');
 const hud = document.getElementById('hud');
+const scoreboardEl = document.getElementById('scoreboard');
+const abilityEl = document.getElementById('ability').firstElementChild;
 
-const player = { id: null, x: 0, y: 0, size: 20 };
+const player = { id: null, x: 0, y: 0, size: 20, abilityCooldown: 0 };
 let pellets = [];
 let mapSize = 2000;
 
@@ -48,6 +52,7 @@ function draw(players) {
   player.x = me.x;
   player.y = me.y;
   player.size = me.size;
+  player.abilityCooldown = me.abilityCooldown;
 
   const offsetX = canvas.width / 2 - player.x;
   const offsetY = canvas.height / 2 - player.y;
@@ -66,6 +71,10 @@ function draw(players) {
     ctx.beginPath();
     ctx.arc(p.x + offsetX, p.y + offsetY, p.size, 0, Math.PI * 2);
     ctx.fill();
+    ctx.fillStyle = '#fff';
+    ctx.font = '12px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText(p.name || 'Anon', p.x + offsetX, p.y + offsetY - p.size - 10);
     if (p.shield) {
       ctx.strokeStyle = '#0ff';
       ctx.lineWidth = 2;
@@ -76,6 +85,10 @@ function draw(players) {
   }
 
   hud.textContent = `Size: ${player.size}`;
+  const sorted = [...players].sort((a,b) => b.size - a.size).slice(0,5);
+  scoreboardEl.innerHTML = sorted.map(p => `${p.name || 'Anon'}: ${p.size}`).join('<br>');
+  const cooldownRatio = 1 - Math.min(player.abilityCooldown, 300) / 300;
+  abilityEl.style.width = `${cooldownRatio * 100}%`;
 }
 
 setInterval(update, 1000 / 30);

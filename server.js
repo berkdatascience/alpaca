@@ -36,18 +36,21 @@ function distance(a, b) {
 }
 
 io.on('connection', (socket) => {
-  const player = {
-    id: socket.id,
-    x: Math.random() * MAP_SIZE,
-    y: Math.random() * MAP_SIZE,
-    size: START_SIZE,
-    speed: 3,
-    abilityCooldown: 0,
-    shield: false,
-  };
-  players.set(socket.id, player);
-
-  socket.emit('init', { id: socket.id, pellets, MAP_SIZE });
+  // wait for the client to send their name before spawning
+  socket.on('join', (name) => {
+    const player = {
+      id: socket.id,
+      name: name || 'Anonymous',
+      x: Math.random() * MAP_SIZE,
+      y: Math.random() * MAP_SIZE,
+      size: START_SIZE,
+      speed: 3,
+      abilityCooldown: 0,
+      shield: false,
+    };
+    players.set(socket.id, player);
+    socket.emit('init', { id: socket.id, pellets, MAP_SIZE });
+  });
 
   socket.on('move', (dir) => {
     const p = players.get(socket.id);

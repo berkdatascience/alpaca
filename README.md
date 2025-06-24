@@ -13,12 +13,13 @@ This project is a simplified web-based game inspired by **Agar.io** with additio
    npm start
    ```
 
-Then open <http://localhost:3000> in your browser.
+Then open <http://localhost:3000> in your browser and enter a nickname to join the game.
 
 ## Features
 
 - Basic growth mechanic: eat pellets to gain mass.
-- Player abilities: speed boost and shield.
+- Player abilities: speed boost and shield with visible cooldown bar.
+- Named players with a scoreboard showing the top sizes.
 - Simple free-for-all mode with a looping game arena.
 
 The code is intentionally small and can be extended to implement more complex mechanics such as capture the flag or king of the hill.
